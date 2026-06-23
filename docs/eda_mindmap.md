@@ -25,35 +25,36 @@ Para análises de detrator x ofensor, considera-se quando necessário, a defini�
 - **H2:** Mais tentativas de entrega reduzem NPS.
 - **H3:** Tempo total de entrega importa menos que atraso percebido?
 - **H4:** Frete alto + atraso impacta mais no NPS do que somente atraso.
+- **H5:** Frete alto + atraso impacta mais no NPS do que somente atraso.
 
 ## 2. Impacto do atendimento na satisfação
 
-- **H5:** Mais contatos com atendimento indicam maior chance de detrator/menor NPS
-- **H6:** Maior tempo de resolutividade reduz NPS.
-- **H7:** Reclamacoes sao mais impactantes em NPS que contatos simples.
-- **H8:** Atendimento rapido pode recuperar parcialmente clientes com problema logistico.
+- **H6:** Mais contatos com atendimento indicam maior chance de detrator/menor NPS
+- **H7:** Maior tempo de resolutividade reduz NPS.
+- **H8:** Reclamacoes sao mais impactantes em NPS que contatos simples.
+- **H9:** Atendimento rapido pode recuperar parcialmente clientes com problema logistico.
 
 ## 3. Perfil do pedidor (order) impacta a satisfação?
 
-- **H9:** Pedidos de maior valor geram maior expectativa e menor tolerancia a falhas - Ou seja, pedidos de maiores valores tem menor NPS quando atrasados, por exemplo, em comparação com a média
-- **H10:** Maior quantidade de itens aumenta risco operacional (Atrasos, por exemplo)
-- **H11:** Descontos reduzem insatisfaçãoo ou mascaram possíveis problemas.
-- **H12:** Muitas parcelas podem estar associadas a perfis com comportamento diferente.
+- **H10:** Pedidos de maior valor geram maior expectativa e menor tolerancia a falhas - Ou seja, pedidos de maiores valores tem menor NPS quando atrasados, por exemplo, em comparação com a média
+- **H11:** Maior quantidade de itens aumenta risco operacional (Atrasos, por exemplo)
+- **H12:** Descontos reduzem insatisfaçãoo ou mascaram possíveis problemas.
+- **H13:** Muitas parcelas podem estar associadas a perfis com comportamento diferente.
 
 ## 4. Perfil do cliente influencia NPS?
 
-- **H13:** Clientes antigos sao mais tolerantes a falhas como atrasos ou várias tentativas de entrega.
-- **H14:** Clientes novos tem NPS mais sensivel a primeira experiencia.
-- **H15:** Idade e regiao podem revelar segmentos com expectativas diferentes
-    H15.1: Clientes mais jovens reagem de forma diferente a atrasos
-    H15.2: Clientes de regiões espcíficas são mais tolerantes a atraso?
-- **H16:** Diferencas regionais podem refletir operacao logistica local.
+- **H14:** Clientes antigos sao mais tolerantes a falhas como atrasos ou várias tentativas de entrega.
+- **H15:** Clientes novos tem NPS mais sensivel a primeira experiencia.
+- **H16:** Idade e regiao podem revelar segmentos com expectativas diferentes
+    H16.1: Clientes mais jovens reagem de forma diferente a atrasos
+    H16.2: Clientes de regiões espcíficas são mais tolerantes a atraso?
+- **H17:** Diferencas regionais podem refletir operacao logistica local.
 
 ## 5. Indicadores internos se relacionam com NPS?
 Análises que ajudam a analisar o histórico, mas não necessariamente podem ser usadas como features em modelo preditivo.
 
-- **H17:** Recompra em 30 dias valida satisfacao real.
-- **H18:** Ausencia de recompra pode ser consequencia de experiencia ruim.
+- **H18:** Recompra em 30 dias valida satisfacao real.
+- **H19:** Ausencia de recompra pode ser consequencia de experiencia ruim.
 
 
 ## 6. Pontos de ruptura na jornada
