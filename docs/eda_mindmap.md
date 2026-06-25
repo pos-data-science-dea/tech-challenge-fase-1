@@ -34,7 +34,7 @@ Para análises de detrator x ofensor, considera-se quando necessário, a defini�
 - **H8:** Reclamacoes sao mais impactantes em NPS que contatos simples.
 - **H9:** Atendimento rapido pode recuperar parcialmente clientes com problema logistico.
 
-## 3. Perfil do pedidor (order) impacta a satisfação?
+## 3. Perfil do pedido impacta a satisfação?
 
 - **H10:** Pedidos de maior valor geram maior expectativa e menor tolerancia a falhas - Ou seja, pedidos de maiores valores tem menor NPS quando atrasados, por exemplo, em comparação com a média
 - **H11:** Maior quantidade de itens aumenta risco operacional (Atrasos, por exemplo)
