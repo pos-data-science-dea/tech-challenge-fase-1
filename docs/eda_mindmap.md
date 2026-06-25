@@ -55,7 +55,7 @@ Análises que ajudam a analisar o histórico, mas não necessariamente podem ser
 
 - **H18:** Recompra em 30 dias valida satisfacao real.
 - **H19:** Ausencia de recompra pode ser consequencia de experiencia ruim.
-
+- **H20:** Os indicadores internos de satisfação tem coerência com NPS.
 
 ## 6. Pontos de ruptura na jornada
 
