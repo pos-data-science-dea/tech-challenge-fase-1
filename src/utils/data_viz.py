@@ -82,6 +82,86 @@ def plot_comparative_histogram(
     plt.show()
 
 
+def plot_two_column_histograms(
+    df: pd.DataFrame,
+    first_col: str,
+    second_col: str,
+    first_label: str | None = None,
+    second_label: str | None = None,
+    bins: int = 30,
+    stat: str = "density",
+    title: str | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
+    figsize: tuple[int, int] = (10, 5),
+    kde: bool = True,
+    alpha: float = 0.35,
+    palette: tuple[str, str] = ("#2563EB", "#F97316"),
+    ax: Axes | None = None,
+) -> tuple[Figure, Axes]:
+    """Plota histogramas sobrepostos de duas colunas numericas no mesmo grafico."""
+    _validate_columns(df, [first_col, second_col])
+
+    sns.set_theme(style="whitegrid", context="notebook")
+
+    labels = {
+        first_col: first_label or _humanize_column_name(first_col),
+        second_col: second_label or _humanize_column_name(second_col),
+    }
+
+    plot_df = (
+        df[[first_col, second_col]]
+        .rename(columns=labels)
+        .melt(var_name="variavel", value_name="valor")
+        .dropna()
+    )
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.figure
+
+    sns.histplot(
+        data=plot_df,
+        x="valor",
+        hue="variavel",
+        bins=bins,
+        stat=stat,
+        common_norm=False,
+        kde=kde,
+        element="step",
+        fill=True,
+        alpha=alpha,
+        linewidth=1.4,
+        palette=list(palette),
+        ax=ax,
+    )
+
+    default_y_label = "Densidade" if stat == "density" else "Quantidade"
+
+    ax.set_title(
+        title
+        or (
+            f"{_humanize_column_name(first_col)} vs. "
+            f"{_humanize_column_name(second_col)}"
+        ),
+        fontsize=15,
+        fontweight="bold",
+        loc="left",
+        pad=14,
+    )
+    ax.set_xlabel(x_label or "Valor", fontsize=12, labelpad=9)
+    ax.set_ylabel(y_label or default_y_label, fontsize=12, labelpad=9)
+    ax.grid(axis="y", alpha=0.25)
+    ax.grid(axis="x", alpha=0.08)
+
+    _format_legend(ax, title="Variavel", loc="best")
+    sns.despine(ax=ax, left=False, bottom=False)
+    fig.tight_layout()
+
+    return fig, ax
+
+
 def plot_boxplot(
     df: pd.DataFrame,
     x_col: str,
@@ -483,6 +563,12 @@ def _format_legend(
     loc: str = "upper right",
 ) -> None:
     handles, labels = ax.get_legend_handles_labels()
+    if not handles or not labels:
+        legend = ax.get_legend()
+        if legend is not None:
+            legend.set_title(title)
+        return
+
     ax.legend(
         handles=handles,
         labels=labels,
@@ -498,6 +584,7 @@ __all__ = [
     "add_nps_category",
     "plot_nps_relationship",
     "plot_comparative_histogram",
+    "plot_two_column_histograms",
     "plot_boxplot",
     "plot_crosstab_heatmap",
     "plot_faceted_regression",
