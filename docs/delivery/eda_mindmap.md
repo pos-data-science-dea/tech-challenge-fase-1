@@ -24,13 +24,13 @@ Para análises de detrator x ofensor, considera-se quando necessário, a defini�
 - **H1:** Atraso na entrega reduz fortemente o NPS.
 - **H2:** Mais tentativas de entrega reduzem NPS.
 - **H3:** Tempo total de entrega importa menos que atraso percebido?
-- **H4:** Frete alto + atraso impacta mais no NPS do que somente atraso.
+- **H4:** Frete alto tem associação com NPS.
 - **H5:** Frete alto + atraso impacta mais no NPS do que somente atraso.
 
 ## 2. Impacto do atendimento na satisfação
 
 - **H6:** Mais contatos com atendimento indicam maior chance de detrator/menor NPS
-- **H7:** Maior tempo de resolutividade reduz NPS.
+- **H7:** Maior tempo de resolução reduz NPS.
 - **H8:** Reclamacoes sao mais impactantes em NPS que contatos simples.
 - **H9:** Atendimento rapido pode recuperar parcialmente clientes com problema logistico.
 
@@ -38,7 +38,7 @@ Para análises de detrator x ofensor, considera-se quando necessário, a defini�
 
 - **H10:** Pedidos de maior valor geram maior expectativa e menor tolerancia a falhas - Ou seja, pedidos de maiores valores tem menor NPS quando atrasados, por exemplo, em comparação com a média
 - **H11:** Maior quantidade de itens aumenta risco operacional (Atrasos, por exemplo)
-- **H12:** Descontos reduzem insatisfaçãoo ou mascaram possíveis problemas.
+- **H12:** Descontos reduzem insatisfação ou mascaram possíveis problemas?
 - **H13:** Muitas parcelas podem estar associadas a perfis com comportamento diferente.
 
 ## 4. Perfil do cliente influencia NPS?
@@ -59,9 +59,9 @@ Análises que ajudam a analisar o histórico, mas não necessariamente podem ser
 
 ## 6. Pontos de ruptura na jornada
 
-- **H20:** Existe um limite de atraso a partir do qual o NPS cai de forma mais significativa.
-- **H21:** A partir de certo numero de reclamacoes, os clientes tendem a ser mais detratores.
-- **H22:** Resoluçaõ demorada combinada com atraso cria efeito pior que cada fator isolado.
+- **H21:** Existe um limite de atraso a partir do qual o NPS cai de forma mais significativa.
+- **H22:** A partir de certo numero de reclamacoes, os clientes tendem a ser mais detratores.
+- **H23:** Resolução demorada combinada com atraso cria efeito pior que cada fator isolado.
 - **H24:** Clientes com frete alto e atraso tem percepção pior
 ## 
 

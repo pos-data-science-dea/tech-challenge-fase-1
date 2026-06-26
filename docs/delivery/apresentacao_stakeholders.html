@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NPS Preditivo — Tech Challenge Fase 1 · FIAP</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #1E3A5F;
+      --blue:      #2563EB;
+      --blue-lt:   #DBEAFE;
+      --red:       #DC2626;
+      --red-lt:    #FEE2E2;
+      --amber:     #F59E0B;
+      --amber-lt:  #FEF3C7;
+      --green:     #16A34A;
+      --green-lt:  #DCFCE7;
+      --bg:        #F1F5F9;
+      --white:     #FFFFFF;
+      --text:      #1F2937;
+      --muted:     #6B7280;
+      --border:    #E5E7EB;
+      --radius:    14px;
+      --shadow:    0 1px 4px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(30,58,95,0.97);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1140px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 58px;
+    }
+    .nav-brand { color: #fff; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; white-space: nowrap; }
+    .nav-brand span { opacity: 0.55; font-weight: 400; }
+    .nav-links { display: flex; gap: 2px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.72); text-decoration: none;
+      padding: 6px 13px; border-radius: 7px;
+      font-size: 0.82rem; font-weight: 500;
+      transition: background 0.18s, color 0.18s;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.13); }
+    .nav-links a.active { color: #fff; background: rgba(255,255,255,0.18); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(140deg, #0f2744 0%, #1e3a5f 40%, #2563eb 100%);
+      color: #fff; padding: 80px 28px 72px; text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-block; background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 100px; padding: 5px 16px;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 800;
+      letter-spacing: -0.025em; margin-bottom: 16px; line-height: 1.15;
+    }
+    .hero p { font-size: 1.05rem; opacity: 0.82; max-width: 580px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-meta { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+    .hero-meta-item { font-size: 0.82rem; opacity: 0.65; }
+    .hero-meta-item strong { opacity: 1; color: #fff; font-size: 0.85rem; }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
+
+    /* ── SECTIONS ── */
+    section { padding: 72px 0; }
+    section.alt { background: var(--white); }
+
+    .section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800;
+      color: var(--navy); margin-bottom: 14px; letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .section-lead {
+      font-size: 1rem; color: var(--muted); max-width: 700px;
+      margin-bottom: 44px; line-height: 1.75;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 28px;
+    }
+    section.alt .card { background: var(--bg); }
+
+    /* ── METRIC CARDS ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 16px; margin-bottom: 44px; }
+    .metric-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 22px 24px;
+      border-top: 4px solid var(--blue);
+    }
+    section.alt .metric-card { background: var(--bg); }
+    .metric-card.red   { border-top-color: var(--red); }
+    .metric-card.green { border-top-color: var(--green); }
+    .metric-card.amber { border-top-color: var(--amber); }
+    .metric-card .value { font-size: 2rem; font-weight: 800; color: var(--navy); line-height: 1; margin-bottom: 5px; }
+    .metric-card .label { font-size: 0.83rem; color: var(--muted); font-weight: 500; }
+    .metric-card .detail { font-size: 0.77rem; color: #9CA3AF; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.5; }
+
+    /* ── CHART CARDS ── */
+    .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 22px; }
+    .chart-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 24px;
+    }
+    section.alt .chart-card { background: var(--bg); }
+    .chart-card-title { font-size: 0.92rem; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .chart-card-sub   { font-size: 0.78rem; color: var(--muted); margin-bottom: 18px; }
+    .chart-wrap { position: relative; }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      border: 1px solid #BFDBFE; border-radius: var(--radius);
+      padding: 24px 28px; margin-bottom: 38px;
+    }
+    .highlight h3 { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .highlight p  { font-size: 0.88rem; color: #374151; line-height: 1.75; }
+
+    /* ── ALERT ── */
+    .alert {
+      background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px;
+      padding: 14px 18px; font-size: 0.83rem; color: #78350F; margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .alert code { background: rgba(0,0,0,0.07); padding: 1px 5px; border-radius: 4px; font-size: 0.8rem; }
+
+    /* ── INSIGHT BOXES ── */
+    .insight-list { display: flex; flex-direction: column; gap: 12px; }
+    .insight {
+      background: var(--blue-lt); border-left: 3px solid var(--blue);
+      border-radius: 8px; padding: 12px 16px;
+    }
+    .insight.red    { background: var(--red-lt);   border-left-color: var(--red); }
+    .insight.amber  { background: var(--amber-lt); border-left-color: var(--amber); }
+    .insight.green  { background: var(--green-lt); border-left-color: var(--green); }
+    .insight.gray   { background: #F3F4F6;          border-left-color: #9CA3AF; }
+    .insight strong { display: block; font-size: 0.83rem; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .insight span   { font-size: 0.82rem; color: #374151; line-height: 1.55; }
+
+    /* ── RECOMMENDATION CARDS ── */
+    .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+    .rec-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 22px; display: flex; gap: 16px; align-items: flex-start;
+    }
+    section.alt .rec-card { background: var(--bg); }
+    .rec-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; flex-shrink: 0;
+    }
+    .rec-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .rec-card p  { font-size: 0.81rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 36px; }
+    table { width: 100%; border-collapse: collapse; background: var(--white); font-size: 0.85rem; }
+    section.alt table { background: var(--bg); }
+    th {
+      background: var(--navy); color: #fff; padding: 12px 16px;
+      text-align: left; font-weight: 600; font-size: 0.77rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(0,0,0,0.02); }
+    .best-row td { background: #F0FDF4 !important; font-weight: 600; }
+    section.alt .best-row td { background: #DCFCE7 !important; }
+    .bar-in { display: flex; align-items: center; gap: 8px; }
+    .bar-fill { height: 8px; border-radius: 4px; background: var(--blue); min-width: 4px; }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--border); margin: 44px 0; }
+
+    /* ── SUB-HEADING ── */
+    .sub-h { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 10px; margin-top: 40px; }
+    .sub-p { font-size: 0.88rem; color: var(--muted); margin-bottom: 24px; line-height: 1.7; max-width: 680px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.55);
+      text-align: center; padding: 36px 28px; font-size: 0.78rem; line-height: 1.8;
+    }
+    footer strong { color: rgba(255,255,255,0.9); }
+
+    @media (max-width: 660px) {
+      .nav-links { display: none; }
+      .hero { padding: 52px 20px 48px; }
+      .container { padding: 0 18px; }
+      section { padding: 52px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ NAV -->
+<nav id="top-nav">
+  <div class="nav-inner">
+    <span class="nav-brand">NPS Preditivo <span>· Tech Challenge Fase 1</span></span>
+    <ul class="nav-links">
+      <li><a href="#contexto">Contexto</a></li>
+      <li><a href="#dados">Dados</a></li>
+      <li><a href="#analise">Análise</a></li>
+      <li><a href="#modelo">Modelo</a></li>
+      <li><a href="#conclusoes">Conclusões</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════ HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">FIAP · Pós-Graduação AI Scientist · 2026</div>
+  <h1>NPS Preditivo para E-Commerce</h1>
+  <p>Como dados operacionais de logística e atendimento podem antecipar a satisfação do cliente — antes da pesquisa acontecer.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong>Artur Costa</strong> &amp; <strong>Davi Tolentino</strong></div>
+    <div class="hero-meta-item">2.500 pedidos analisados</div>
+    <div class="hero-meta-item">20 hipóteses investigadas</div>
+    <div class="hero-meta-item">5 modelos comparados</div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════ 01 CONTEXTO -->
+<section id="contexto" class="alt">
+  <div class="container">
+    <div class="section-label">01 · Contexto</div>
+    <h2 class="section-title">O Problema de Negócio</h2>
+    <p class="section-lead">Atualmente, o NPS é coletado apenas após o encerramento da jornada do cliente. Isso significa que, quando a empresa descobre a insatisfação, já é tarde para agir. Este projeto propõe uma abordagem diferente: usar dados operacionais já disponíveis durante a jornada para prever o NPS antes da pesquisa.</p>
+
+    <div class="highlight">
+      <h3>Pergunta Central</h3>
+      <p>Quais fatores operacionais explicam a insatisfação do cliente — e como a empresa pode <strong>agir de forma preventiva</strong> para reduzir a geração de detratores antes mesmo da pesquisa de NPS ser aplicada?</p>
+    </div>
+
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rec-icon" style="background:#DBEAFE;">📦</div>
+        <div>
+          <h4>Identificar Risco Logístico</h4>
+          <p>Detectar antecipadamente pedidos com alta probabilidade de atraso para acionar intervenções preventivas na operação.</p>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon" style="background:#DCFCE7;">🎧</div>
+        <div>
+          <h4>Priorizar Atendimento</h4>
+          <p>Identificar clientes com múltiplos contatos e reclamações para tratamento prioritário antes que a insatisfação se consolide.</p>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon" style="background:#FEF3C7;">📊</div>
+        <div>
+          <h4>Score Operacional de Satisfação</h4>
+          <p>Transformar dados operacionais em uma pontuação preditiva de NPS acionável em tempo real pelas equipes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ 02 DADOS -->
+<section id="dados">
+  <div class="container">
+    <div class="section-label">02 · Qualidade dos Dados</div>
+    <h2 class="section-title">Visão Geral da Base</h2>
+    <p class="section-lead">Antes de qualquer análise, verificamos a integridade dos dados disponíveis. A base se mostrou sólida: sem valores ausentes, sem duplicatas e com cobertura completa em todas as colunas.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="value">2.500</div>
+        <div class="label">Pedidos analisados</div>
+        <div class="detail">1 pedido por cliente · sem duplicatas · base completa</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">19</div>
+        <div class="label">Variáveis disponíveis</div>
+        <div class="detail">Logística, atendimento, perfil do pedido e NPS</div>
+      </div>
+      <div class="metric-card red">
+        <div class="value">0</div>
+        <div class="label">Valores ausentes</div>
+        <div class="detail">Base 100% completa — nenhuma coluna com nulos</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="value">4,4</div>
+        <div class="label">NPS médio da base</div>
+        <div class="detail">Escala 0–10 · maioria dos clientes é detratora</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Distribuição dos Clientes por Categoria NPS</div>
+        <div class="chart-card-sub">Detratores dominam a base com 72% dos pedidos</div>
+        <div class="chart-wrap" style="height:210px;">
+          <canvas id="chartNpsDist"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Pontos de Atenção Identificados no Sanity Check</div>
+        <div class="chart-card-sub">Achados críticos que orientam a análise exploratória</div>
+        <div class="insight-list">
+          <div class="insight red">
+            <strong>89% dos pedidos tiveram atraso na entrega</strong>
+            <span>2.223 de 2.500 pedidos registraram ao menos um dia de atraso. O atraso é a regra, não a exceção nessa operação.</span>
+          </div>
+          <div class="insight amber">
+            <strong>Média de 4 reclamações por pedido</strong>
+            <span>Volume elevado e consistente de reclamações — indica fricção recorrente na jornada, independente do perfil do cliente.</span>
+          </div>
+          <div class="insight">
+            <strong>91% dos clientes não recompraram em 30 dias</strong>
+            <span>Taxa de recompra muito baixa, consistente com a alta proporção de detratores e NPS médio abaixo de 5.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ 03 EDA -->
+<section id="analise" class="alt">
+  <div class="container">
+    <div class="section-label">03 · Análise Exploratória</div>
+    <h2 class="section-title">O Que Explica a Satisfação?</h2>
+    <p class="section-lead">Investigamos 20 hipóteses em 5 blocos temáticos — logística, atendimento, perfil do pedido, perfil do cliente e indicadores internos. Apresentamos aqui os achados de maior relevância para o negócio.</p>
+
+    <!-- INSIGHT 1 -->
+    <p class="sub-h">📦 Atraso na entrega é o principal driver de insatisfação</p>
+    <p class="sub-p">Clientes com ao menos um dia de atraso têm NPS médio <strong>2,8 pontos abaixo</strong> dos clientes sem atraso. A relação é linear: cada dia adicional de atraso está associado, em média, a uma queda de <strong>1,03 ponto no NPS</strong> (regressão simples, R²=0,36).</p>
+
+    <div class="chart-grid" style="margin-bottom: 52px;">
+      <div class="chart-card">
+        <div class="chart-card-title">NPS Médio — Com Atraso vs. Sem Atraso</div>
+        <div class="chart-card-sub">88,9% dos pedidos tiveram ao menos 1 dia de atraso na entrega</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartDelayNps"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Correlação das Variáveis Operacionais com NPS</div>
+        <div class="chart-card-sub">Coeficiente de Pearson · somente variáveis com associação relevante</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartCorrelations"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHT 2 -->
+    <p class="sub-h">🎧 Atendimento rápido atenua os danos do atraso</p>
+    <p class="sub-p">Entre clientes que sofreram atraso, resolver o problema em até 2 dias está associado a um NPS médio <strong>1,26 pontos maior</strong> do que quando a resolução leva mais de 9 dias. Agilidade no atendimento não elimina o impacto do atraso, mas reduz o dano na experiência.</p>
+
+    <div class="chart-grid" style="margin-bottom: 52px;">
+      <div class="chart-card">
+        <div class="chart-card-title">NPS Médio por Quartil de Tempo de Resolução</div>
+        <div class="chart-card-sub">Somente clientes com atraso na entrega (n = 2.223)</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartResolution"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Reclamações: o segundo maior fator</div>
+        <div class="chart-card-sub">Correlação −0,50 com NPS · padrão mais claro que contatos simples</div>
+        <div class="insight-list">
+          <div class="insight green">
+            <strong>0–3 reclamações → NPS acima de 5</strong>
+            <span>Presença relevante de promotores (até 20%). Maior margem para recuperação da satisfação.</span>
+          </div>
+          <div class="insight amber">
+            <strong>4–7 reclamações → NPS entre 3 e 5</strong>
+            <span>Zona de risco. A maioria dos clientes é detratora, mas promotores ainda existem em baixa proporção.</span>
+          </div>
+          <div class="insight red">
+            <strong>8+ reclamações → NPS abaixo de 3, sem promotores</strong>
+            <span>A partir de 8 reclamações, praticamente nenhum cliente promotor foi observado na base.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- O QUE NÃO IMPORTOU -->
+    <p class="sub-h">🔍 O que não impactou o NPS</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:14px;">
+      <div class="insight gray">
+        <strong>Valor do frete</strong>
+        <span>Nenhuma associação — nem pelo valor absoluto, nem como proporção do pedido, nem por região ou faixa etária.</span>
+      </div>
+      <div class="insight gray">
+        <strong>Valor do pedido e desconto</strong>
+        <span>Pedidos de maior valor ou com descontos maiores não apresentaram padrão diferente de satisfação.</span>
+      </div>
+      <div class="insight gray">
+        <strong>Perfil do cliente</strong>
+        <span>Região, faixa etária e tempo de relacionamento com a empresa não mostraram associação relevante com NPS.</span>
+      </div>
+      <div class="insight gray">
+        <strong>Tentativas de entrega</strong>
+        <span>1, 2 ou 3 tentativas de entrega não produziram diferença significativa no NPS médio dos grupos.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ 04 MODELO -->
+<section id="modelo">
+  <div class="container">
+    <div class="section-label">04 · Modelo Preditivo</div>
+    <h2 class="section-title">Prevendo o NPS Antes da Pesquisa</h2>
+    <p class="section-lead">Treinamos 5 modelos de regressão para estimar o score de NPS usando apenas dados disponíveis operacionalmente antes da pesquisa. A partir do score previsto, derivamos automaticamente a classificação Detrator / Neutro / Promotor.</p>
+
+    <div class="highlight">
+      <h3>Por que Regressão, e não Classificação direta?</h3>
+      <p>A EDA evidenciou relações <strong>lineares</strong> entre NPS e variáveis operacionais. Um modelo de regressão preserva a granularidade da nota: saber que um cliente tende a dar nota 2 versus nota 5 é informação acionável para priorização — ambos são "Detratores", mas representam graus muito diferentes de insatisfação. A classificação Detrator / Neutro / Promotor sai automaticamente da nota prevista, aplicando a mesma regra de negócio padrão.</p>
+    </div>
+
+    <div class="alert">
+      ⚠️ <strong>Variáveis excluídas por risco de vazamento de dados (data leakage):</strong>
+      <code>repeat_purchase_30d</code> — a recompra acontece após a pesquisa de NPS; 92,2% dos promotores recompraram, tornando-a um proxy direto do target.
+      <code>csat_internal_score</code> — correlação de 0,56 com NPS, mas metodologia de cálculo desconhecida; pode incorporar o próprio NPS ou ser coletado após a pesquisa.
+    </div>
+
+    <div class="chart-grid" style="margin-bottom: 40px;">
+      <div class="chart-card">
+        <div class="chart-card-title">Comparação de Modelos — RMSE no Conjunto de Teste</div>
+        <div class="chart-card-sub">Erro médio em pontos de NPS · quanto menor, melhor</div>
+        <div class="chart-wrap" style="height:210px;">
+          <canvas id="chartModels"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Feature Importance — Gradient Boosting</div>
+        <div class="chart-card-sub">Contribuição relativa de cada variável na previsão do NPS</div>
+        <div class="chart-wrap" style="height:210px;">
+          <canvas id="chartImportance"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <p class="sub-h" style="margin-top:0;">Métricas Completas — Conjunto de Teste (20% dos dados)</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>RMSE ↓</th>
+            <th>MAE ↓</th>
+            <th>R² ↑</th>
+            <th>Desempenho relativo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Regressão Linear (baseline)</td>
+            <td>1,87</td><td>1,50</td><td>0,44</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:52%; background:#93C5FD;"></div></div></td>
+          </tr>
+          <tr>
+            <td>Ridge (regularizado)</td>
+            <td>1,86</td><td>1,49</td><td>0,44</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:53%; background:#93C5FD;"></div></div></td>
+          </tr>
+          <tr>
+            <td>Lasso (regularizado)</td>
+            <td>1,88</td><td>1,51</td><td>0,43</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:51%; background:#93C5FD;"></div></div></td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>1,62</td><td>1,27</td><td>0,58</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:74%; background:var(--amber);"></div></div></td>
+          </tr>
+          <tr class="best-row">
+            <td>✅ Gradient Boosting</td>
+            <td>1,55</td><td>1,21</td><td>0,62</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:86%; background:var(--green);"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sub-h">Classificação Derivada — Gradient Boosting</p>
+    <p class="sub-p">A partir da nota prevista, clientes são classificados pela regra padrão de mercado (≤6 Detrator, 7–8 Neutro, ≥9 Promotor). A métrica prioritária é o <strong>recall de Detratores</strong>: não identificar um detrator (falso negativo) tem custo maior do que acionar preventivamente um cliente que seria neutro.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="value">83%</div>
+        <div class="label">Acurácia geral</div>
+        <div class="detail">Proporção de classificações corretas no conjunto de teste (500 pedidos)</div>
+      </div>
+      <div class="metric-card red">
+        <div class="value">88%</div>
+        <div class="label">Recall · Detratores</div>
+        <div class="detail">88% dos detratores reais são identificados antes da pesquisa</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="value">62%</div>
+        <div class="label">Recall · Neutros</div>
+        <div class="detail">Classe mais difícil — limítrofe entre as outras duas categorias</div>
+      </div>
+      <div class="metric-card green">
+        <div class="value">70%</div>
+        <div class="label">Recall · Promotores</div>
+        <div class="detail">Sub-representados na base (8,6%) — desafio natural de imbalanceamento</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ 05 CONCLUSÕES -->
+<section id="conclusoes" class="alt">
+  <div class="container">
+    <div class="section-label">05 · Conclusões</div>
+    <h2 class="section-title">Recomendações para o Negócio</h2>
+    <p class="section-lead">Com base nos padrões identificados na análise exploratória e nos resultados do modelo preditivo, destacamos as ações de maior impacto potencial para redução de detratores.</p>
+
+    <div class="rec-grid" style="margin-bottom:48px;">
+      <div class="rec-card">
+        <div class="rec-icon" style="background:var(--red-lt);">🚚</div>
+        <div>
+          <h4>Priorize pedidos em risco de atraso</h4>
+          <p>O atraso é o fator de maior impacto. Monitorar pedidos com previsão de atraso e acionar logística preventivamente é a ação de maior retorno em NPS.</p>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon" style="background:var(--green-lt);">⚡</div>
+        <div>
+          <h4>Resolva reclamações em até 48 horas</h4>
+          <p>Clientes com atraso e resolução em até 2 dias têm NPS 1,26 pontos acima dos que esperam mais de 9 dias. Agilidade recupera satisfação mesmo quando o problema já ocorreu.</p>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon" style="background:var(--amber-lt);">🔔</div>
+        <div>
+          <h4>Use o modelo para alertas preventivos</h4>
+          <p>Com 88% de recall em detratores, o modelo pode gerar alertas operacionais para clientes com alta probabilidade de detração, permitindo intervenção antes da pesquisa.</p>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon" style="background:#EDE9FE;">📉</div>
+        <div>
+          <h4>Monitore o volume de reclamações</h4>
+          <p>A partir de 8 reclamações, não há promotores. Um alerta operacional ao atingir 5 reclamações pode evitar que o cliente atinja o patamar crítico de insatisfação.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="sub-h" style="margin-top:0;">⚠️ Limitações e Cuidados</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:14px;">
+      <div class="insight amber">
+        <strong>Correlação não implica causalidade</strong>
+        <span>As associações identificadas são exploratórias. Reduzir atrasos provavelmente melhora o NPS, mas causalidade direta requer experimentos controlados.</span>
+      </div>
+      <div class="insight amber">
+        <strong>Modelo precisa de monitoramento contínuo</strong>
+        <span>Treinado sobre uma amostra histórica. Performance pode degradar com mudanças operacionais, sazonalidade ou alterações no perfil dos pedidos.</span>
+      </div>
+      <div class="insight amber">
+        <strong>Classe Neutro é a mais difícil de prever</strong>
+        <span>Com apenas 19% dos clientes e recall de 62%, a classe Neutro requer atenção especial. Clientes nessa faixa podem migrar para Detrator ou Promotor com pequenas intervenções.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ FOOTER -->
+<footer>
+  <p><strong>NPS Preditivo · Tech Challenge Fase 1 · FIAP Pós-Graduação AI Scientist</strong></p>
+  <p style="margin-top:6px;">Artur Costa &amp; Davi Tolentino · 2026</p>
+  <p style="margin-top:4px; opacity:0.45; font-size:0.72rem;">Análise baseada em base amostral de 2.500 pedidos · Resultados do modelo via <code style="opacity:0.7;">notebooks/model/modelo_preditivo_nps.ipynb</code></p>
+</footer>
+
+<!-- ════════════════════════════════════════════ SCRIPTS -->
+<script>
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.color = '#6B7280';
+
+const C = {
+  detrator: '#DC2626',
+  neutro:   '#F59E0B',
+  promotor: '#16A34A',
+  blue:     '#2563EB',
+  navy:     '#1E3A5F',
+  blueLt:   '#93C5FD',
+  gray:     '#D1D5DB',
+};
+
+// ── 1. NPS Distribution Donut ──────────────────
+new Chart(document.getElementById('chartNpsDist'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Detrator (≤ 6)', 'Neutro (7–8)', 'Promotor (≥ 9)'],
+    datasets: [{
+      data: [72.3, 19.1, 8.6],
+      backgroundColor: [C.detrator, C.neutro, C.promotor],
+      borderWidth: 3,
+      borderColor: '#fff',
+      hoverOffset: 8,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { boxWidth: 13, padding: 14, font: { size: 12 } }
+      },
+      tooltip: {
+        callbacks: { label: ctx => `  ${ctx.label}: ${ctx.parsed}%` }
+      }
+    }
+  }
+});
+
+// ── 2. NPS Delay Bar ──────────────────────────
+new Chart(document.getElementById('chartDelayNps'), {
+  type: 'bar',
+  data: {
+    labels: ['Sem atraso\n(11,1% dos pedidos)', 'Com atraso\n(88,9% dos pedidos)'],
+    datasets: [{
+      label: 'NPS Médio',
+      data: [6.86, 4.07],
+      backgroundColor: [C.promotor, C.detrator],
+      borderRadius: 8,
+      borderSkipped: false,
+      maxBarThickness: 90,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 0, max: 10,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 2 },
+        title: { display: true, text: 'NPS Médio', font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `  NPS médio: ${ctx.parsed.y.toFixed(2)}` } }
+    }
+  }
+});
+
+// ── 3. Correlations Horizontal Bar ────────────
+new Chart(document.getElementById('chartCorrelations'), {
+  type: 'bar',
+  data: {
+    labels: ['Dias de Atraso', 'Reclamações', 'Contatos Atend.', 'Tempo Resolução'],
+    datasets: [{
+      label: 'Correlação com NPS',
+      data: [-0.597, -0.497, -0.351, -0.191],
+      backgroundColor: ['#7F1D1D', '#DC2626', '#F87171', '#FCA5A5'],
+      borderRadius: 5,
+      maxBarThickness: 44,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: {
+        min: -0.72, max: 0,
+        grid: { color: '#F3F4F6' },
+        ticks: { callback: v => v.toFixed(1) },
+        title: { display: true, text: 'Pearson r', font: { size: 11 } }
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 12 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `  r = ${ctx.parsed.x.toFixed(3)}` } }
+    }
+  }
+});
+
+// ── 4. Resolution Time Bar ────────────────────
+new Chart(document.getElementById('chartResolution'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1 · 0–2 dias', 'Q2 · 3–5 dias', 'Q3 · 6–8 dias', 'Q4 · 9–11 dias'],
+    datasets: [{
+      label: 'NPS Médio',
+      data: [4.75, 4.19, 3.83, 3.49],
+      backgroundColor: ['#16A34A', '#65A30D', '#F59E0B', '#DC2626'],
+      borderRadius: 8,
+      borderSkipped: false,
+      maxBarThickness: 72,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 2.5, max: 5.5,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 0.5 },
+        title: { display: true, text: 'NPS Médio', font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => {
+            const pct = [8.14, 5.97, 3.74, 2.76][ctx.dataIndex];
+            return `  % Promotores: ${pct}%`;
+          },
+          label: ctx => `  NPS médio: ${ctx.parsed.y.toFixed(2)}`
+        }
+      }
+    }
+  }
+});
+
+// ── 5. Model Comparison Horizontal Bar ────────
+new Chart(document.getElementById('chartModels'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Regressão Linear',
+      'Lasso',
+      'Ridge',
+      'Random Forest',
+      'Gradient Boosting ✅',
+    ],
+    datasets: [{
+      label: 'RMSE',
+      data: [1.87, 1.88, 1.86, 1.62, 1.55],
+      backgroundColor: [C.blueLt, C.blueLt, C.blueLt, C.neutro, C.promotor],
+      borderRadius: 5,
+      maxBarThickness: 40,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: {
+        min: 1.1, max: 2.1,
+        grid: { color: '#F3F4F6' },
+        title: { display: true, text: 'RMSE (pontos de NPS)', font: { size: 11 } }
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `  RMSE: ${ctx.parsed.x.toFixed(2)}` } }
+    }
+  }
+});
+
+// ── 6. Feature Importance Horizontal Bar ──────
+new Chart(document.getElementById('chartImportance'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Outros',
+      'Tempo de Resolução',
+      'Contatos Atend.',
+      'Flag de Atraso',
+      'Reclamações',
+      'Dias de Atraso',
+    ],
+    datasets: [{
+      label: 'Importância (%)',
+      data: [11, 6, 10, 14, 27, 32],
+      backgroundColor: [C.gray, '#D1FAE5', '#A7F3D0', '#6EE7B7', '#34D399', '#059669'],
+      borderRadius: 5,
+      maxBarThickness: 34,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: { color: '#F3F4F6' },
+        title: { display: true, text: 'Importância relativa (%)', font: { size: 11 } }
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `  ${ctx.parsed.x}% de importância` } }
+    }
+  }
+});
+
+// ── Active nav on scroll ───────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('.nav-links a');
+
+const onScroll = () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 90) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+  });
+};
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+
+</body>
+</html>
