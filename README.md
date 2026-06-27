@@ -88,12 +88,12 @@ A ordem recomendada de leitura e execução é:
    * Criação de variáveis derivadas para apoiar a análise.
    * Geração da base processada em `dados/processed/`.
 
-3. `notebooks/eda/eda_hypothesis.ipynb`
+3. `notebooks/eda/3. EDA.ipynb`
 
    * Análise exploratória orientada por hipóteses.
    * Investigação de fatores associados ao NPS.
 
-4. `notebooks/model/modelo_preditivo_nps.ipynb`
+4. `notebooks/model/4. Modelo Preditivo.ipynb`
 
    * Construção e avaliação de modelos preditivos para o `nps_score`.
    * Modelos avaliados: Regressão Linear (baseline), Ridge, Lasso, Random Forest e Gradient Boosting.
