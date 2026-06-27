@@ -60,9 +60,9 @@ Algumas variáveis derivadas usadas na EDA incluem:
 │   │   ├── 1. Sanity Check dos dados.ipynb
 │   │   └── 2. Feature engineering.ipynb
 │   ├── eda/
-│   │   └── eda_hypothesis.ipynb
+│   │   └── 3. EDA.ipynb
 │   └── model/
-│       └── modelo_preditivo_nps.ipynb
+│       └── 4. Modelo Preditivo.ipynb
 ├── src/
 │   ├── __init__.py
 │   └── utils/
