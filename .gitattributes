@@ -1,6 +1,24 @@
 * text=auto
 
+# Arquivos de código e texto
+.gitattributes text eol=lf
 *.py text eol=lf
 *.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.excalidraw text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
 *.ipynb text eol=lf
 *.csv text eol=lf
+
+# Arquivos binários
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.xlsx binary
+*.xls binary
