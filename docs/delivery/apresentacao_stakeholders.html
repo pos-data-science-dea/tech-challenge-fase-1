@@ -244,7 +244,7 @@
     <div class="hero-meta-item"><strong>Artur Costa</strong> &amp; <strong>Davi Tolentino</strong></div>
     <div class="hero-meta-item">2.500 pedidos analisados</div>
     <div class="hero-meta-item">20 hipóteses investigadas</div>
-    <div class="hero-meta-item">5 modelos comparados</div>
+    <div class="hero-meta-item">6 modelos comparados</div>
   </div>
 </header>
 
@@ -475,7 +475,7 @@
   <div class="container">
     <div class="section-label">04 · Modelo Preditivo</div>
     <h2 class="section-title">Prevendo o NPS Antes da Pesquisa</h2>
-    <p class="section-lead">Treinamos 5 modelos de regressão para estimar o score de NPS usando apenas dados disponíveis operacionalmente antes da pesquisa. A partir do score previsto, derivamos automaticamente a classificação Detrator / Neutro / Promotor.</p>
+    <p class="section-lead">Comparamos seis versões de modelos de regressão, incluindo o Gradient Boosting com hiperparâmetros otimizados, para estimar o score de NPS usando apenas dados disponíveis operacionalmente antes da pesquisa. A partir do score previsto, derivamos automaticamente a classificação Detrator / Neutro / Promotor.</p>
 
     <div class="highlight">
       <h3>Por que Regressão, e não Classificação direta?</h3>
@@ -497,8 +497,8 @@
         </div>
       </div>
       <div class="chart-card">
-        <div class="chart-card-title">Importância das Variáveis — Ridge (coef. absolutos)</div>
-        <div class="chart-card-sub">Magnitude absoluta dos coeficientes do modelo Ridge (α=10) — variáveis com maior coeficiente têm maior peso na previsão</div>
+        <div class="chart-card-title">Importância das Variáveis - Modelo selecionado</div>
+        <div class="chart-card-sub">Importância relativa das variáveis usadas pelo modelo selecionado - leitura orientativa, não causal</div>
         <div class="chart-wrap" style="height:210px;">
           <canvas id="chartImportance"></canvas>
         </div>
@@ -518,56 +518,66 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Regressão Linear (baseline)</td>
-            <td>1,6974</td><td>1,3317</td><td>0,5401</td>
-            <td><div class="bar-in"><div class="bar-fill" style="width:73%; background:#93C5FD;"></div></div></td>
-          </tr>
           <tr class="best-row">
-            <td>✅ Ridge (regularizado)</td>
+            <td>✅ Gradient Boosting com Hiperparâmetros Otimizados</td>
+            <td>1,6795</td><td>1,3201</td><td>0,5498</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:100%; background:var(--green);"></div></div></td>
+          </tr>
+          <tr>
+            <td>Ridge (regularizado)</td>
             <td>1,6965</td><td>1,3303</td><td>0,5406</td>
-            <td><div class="bar-in"><div class="bar-fill" style="width:95%; background:var(--green);"></div></div></td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:88%; background:#93C5FD;"></div></div></td>
           </tr>
           <tr>
             <td>Lasso (regularizado)</td>
             <td>1,6969</td><td>1,3310</td><td>0,5404</td>
-            <td><div class="bar-in"><div class="bar-fill" style="width:94%; background:#93C5FD;"></div></div></td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:87%; background:#93C5FD;"></div></div></td>
+          </tr>
+          <tr>
+            <td>Regressão Linear (baseline)</td>
+            <td>1,6974</td><td>1,3317</td><td>0,5401</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:86%; background:#93C5FD;"></div></div></td>
           </tr>
           <tr>
             <td>Random Forest</td>
-            <td>1,7145</td><td>1,3485</td><td>0,5308</td>
-            <td><div class="bar-in"><div class="bar-fill" style="width:50%; background:var(--amber);"></div></div></td>
+            <td>1,7143</td><td>1,3483</td><td>0,5309</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:58%; background:var(--amber);"></div></div></td>
           </tr>
           <tr>
             <td>Gradient Boosting</td>
-            <td>1,7298</td><td>1,3638</td><td>0,5224</td>
-            <td><div class="bar-in"><div class="bar-fill" style="width:30%; background:#D1D5DB;"></div></div></td>
+            <td>1,7209</td><td>1,3553</td><td>0,5273</td>
+            <td><div class="bar-in"><div class="bar-fill" style="width:35%; background:#D1D5DB;"></div></div></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="sub-h">Classificação Derivada — Ridge</p>
+    <div class="insight amber" style="margin-bottom:28px;">
+      <strong>Como evitar overfitting na escolha do modelo</strong>
+      <span>A decisão não deve considerar apenas o menor RMSE no teste. O Gradient Boosting com hiperparâmetros otimizados foi avaliado comparando erro no treino, erro médio em validação cruzada e erro no teste. Treino muito melhor que CV/teste indicaria memorização; CV e teste próximos sugerem melhor generalização.</span>
+    </div>
+
+    <p class="sub-h">Classificação Derivada - Modelo selecionado</p>
     <p class="sub-p">A partir da nota prevista, clientes são classificados pela regra padrão de mercado (≤6 Detrator, 7–8 Neutro, ≥9 Promotor). A métrica prioritária é o <strong>recall de Detratores</strong>: não identificar um detrator (falso negativo) tem custo maior do que acionar preventivamente um cliente que seria neutro.</p>
 
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="value">78%</div>
+        <div class="value">80%</div>
         <div class="label">Acurácia geral</div>
         <div class="detail">Proporção de classificações corretas no conjunto de teste (500 pedidos)</div>
       </div>
       <div class="metric-card red">
-        <div class="value">93%</div>
+        <div class="value">94%</div>
         <div class="label">Recall · Detratores</div>
-        <div class="detail">93% dos detratores reais são identificados antes da pesquisa</div>
+        <div class="detail">94% dos detratores reais são identificados antes da pesquisa</div>
       </div>
       <div class="metric-card amber">
-        <div class="value">44%</div>
+        <div class="value">49%</div>
         <div class="label">Recall · Neutros</div>
         <div class="detail">Classe mais difícil — limítrofe entre as outras duas categorias</div>
       </div>
       <div class="metric-card green">
-        <div class="value">12%</div>
+        <div class="value">15%</div>
         <div class="label">Recall · Promotores</div>
         <div class="detail">Sub-representados na base (8,6%) — modelo priorizou identificação de detratores</div>
       </div>
@@ -601,7 +611,7 @@
         <div class="rec-icon" style="background:var(--amber-lt);">🔔</div>
         <div>
           <h4>Use o modelo para alertas preventivos</h4>
-          <p>Com 88% de recall em detratores, o modelo pode gerar alertas operacionais para clientes com alta probabilidade de detração, permitindo intervenção antes da pesquisa.</p>
+          <p>Com alto recall em detratores, o modelo pode gerar alertas operacionais para clientes com maior risco de detração, permitindo intervenção antes da pesquisa. A performance deve ser monitorada continuamente para evitar degradação fora da amostra de treino.</p>
         </div>
       </div>
       <div class="rec-card">
@@ -627,7 +637,7 @@
       </div>
       <div class="insight amber">
         <strong>Classe Neutro é a mais difícil de prever</strong>
-        <span>Com apenas 19% dos clientes e recall de 62%, a classe Neutro requer atenção especial. Clientes nessa faixa podem migrar para Detrator ou Promotor com pequenas intervenções.</span>
+        <span>Com apenas 19% dos clientes e recall inferior ao de detratores, a classe Neutro requer atenção especial. Clientes nessa faixa podem migrar para Detrator ou Promotor com pequenas intervenções.</span>
       </div>
     </div>
   </div>
@@ -637,7 +647,7 @@
 <footer>
   <p><strong>NPS Preditivo · Tech Challenge Fase 1 · FIAP Pós-Graduação AI Scientist</strong></p>
   <p style="margin-top:6px;">Artur Costa &amp; Davi Tolentino · 2026</p>
-  <p style="margin-top:4px; opacity:0.45; font-size:0.72rem;">Análise baseada em base amostral de 2.500 pedidos · Resultados do modelo via <code style="opacity:0.7;">notebooks/model/modelo_preditivo_nps.ipynb</code></p>
+  <p style="margin-top:4px; opacity:0.45; font-size:0.72rem;">Análise baseada em base amostral de 2.500 pedidos - Resultados do modelo via <code style="opacity:0.7;">notebooks/model/4. Modelo Preditivo.ipynb</code></p>
 </footer>
 
 <!-- ════════════════════════════════════════════ SCRIPTS -->
@@ -845,12 +855,13 @@ new Chart(document.getElementById('chartModels'), {
       'Random Forest',
       'Regressão Linear',
       'Lasso',
-      'Ridge ✅',
+      'Ridge',
+      'GB Hiperparâmetros Otimizados ✅',
     ],
     datasets: [{
       label: 'RMSE',
-      data: [1.7298, 1.7145, 1.6974, 1.6969, 1.6965],
-      backgroundColor: [C.gray, C.neutro, C.blueLt, C.blueLt, C.promotor],
+      data: [1.7209, 1.7143, 1.6974, 1.6969, 1.6965, 1.6795],
+      backgroundColor: [C.gray, C.neutro, C.blueLt, C.blueLt, C.blueLt, C.promotor],
       borderRadius: 5,
       maxBarThickness: 40,
     }]
@@ -860,7 +871,7 @@ new Chart(document.getElementById('chartModels'), {
     responsive: true, maintainAspectRatio: false,
     scales: {
       x: {
-        min: 1.68, max: 1.74,
+        min: 1.67, max: 1.74,
         grid: { color: '#F3F4F6' },
         title: { display: true, text: 'RMSE (pontos de NPS)', font: { size: 11 } }
       },
@@ -873,21 +884,21 @@ new Chart(document.getElementById('chartModels'), {
   }
 });
 
-// ── 6. Feature Importance Horizontal Bar (Ridge) ──────
+// 6. Feature Importance Horizontal Bar
 new Chart(document.getElementById('chartImportance'), {
   type: 'bar',
   data: {
     labels: [
       'Outros',
-      'Região Sul',
+      'Taxa de Frete',
+      'Tempo Resolução',
       'Contatos Atend.',
       'Reclamações',
-      'Taxa de Frete',
       'Dias de Atraso',
     ],
     datasets: [{
       label: 'Importância (%)',
-      data: [15, 7, 10, 13, 23, 32],
+      data: [6.7, 1.9, 6.1, 7.3, 26.3, 51.8],
       backgroundColor: [C.gray, '#D1FAE5', '#A7F3D0', '#6EE7B7', '#34D399', '#059669'],
       borderRadius: 5,
       maxBarThickness: 34,
