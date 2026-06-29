@@ -353,6 +353,12 @@
     <h2 class="section-title">O Que Explica a Satisfação?</h2>
     <p class="section-lead">Investigamos 20 hipóteses em 5 blocos temáticos — logística, atendimento, perfil do pedido, perfil do cliente e indicadores internos. Apresentamos aqui os achados de maior relevância para o negócio.</p>
 
+    <div style="text-align:center; margin: 32px 0 48px;">
+      <img src="mindmap_eda.png" alt="Mapa mental das hipóteses da análise exploratória"
+           style="max-width:100%; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.12);">
+      <p style="margin-top:12px; font-size:0.82rem; color:#6b7280;">Mapa mental das 20 hipóteses investigadas em 5 blocos temáticos</p>
+    </div>
+
     <!-- INSIGHT 1 -->
     <p class="sub-h">📦 Atraso na entrega é o principal driver de insatisfação</p>
     <p class="sub-p">Clientes com ao menos um dia de atraso têm NPS médio <strong>2,8 pontos abaixo</strong> dos clientes sem atraso. A leitura visual e as estatísticas descritivas mostram uma queda consistente de satisfação conforme aumentam os dias de atraso.</p>
@@ -375,13 +381,6 @@
     </div>
 
     <div class="chart-grid" style="margin-bottom: 52px;">
-      <div class="chart-card" style="grid-column: 1 / -1;">
-        <div class="chart-card-title">Dispersão Observada — Dias de Atraso vs. NPS</div>
-        <div class="chart-card-sub">Amostra de pedidos da base · cada ponto representa um pedido individual</div>
-        <div class="chart-wrap" style="height:260px;">
-          <canvas id="chartDelayScatter"></canvas>
-        </div>
-      </div>
       <div class="chart-card" style="grid-column: 1 / -1;">
         <div class="chart-card-title">NPS Médio por Dias de Atraso na Entrega</div>
         <div class="chart-card-sub">Médias observadas por grupo de atraso · queda consistente de satisfação conforme o atraso aumenta</div>
