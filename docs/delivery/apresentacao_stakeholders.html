@@ -355,7 +355,7 @@
 
     <!-- INSIGHT 1 -->
     <p class="sub-h">📦 Atraso na entrega é o principal driver de insatisfação</p>
-    <p class="sub-p">Clientes com ao menos um dia de atraso têm NPS médio <strong>2,8 pontos abaixo</strong> dos clientes sem atraso. A relação é linear: cada dia adicional de atraso está associado, em média, a uma queda de <strong>1,03 ponto no NPS</strong> (regressão simples, R²=0,36).</p>
+    <p class="sub-p">Clientes com ao menos um dia de atraso têm NPS médio <strong>2,8 pontos abaixo</strong> dos clientes sem atraso. A leitura visual e as estatísticas descritivas mostram uma queda consistente de satisfação conforme aumentam os dias de atraso.</p>
 
     <div class="chart-grid" style="margin-bottom: 52px;">
       <div class="chart-card">
@@ -376,8 +376,15 @@
 
     <div class="chart-grid" style="margin-bottom: 52px;">
       <div class="chart-card" style="grid-column: 1 / -1;">
+        <div class="chart-card-title">Dispersão Observada — Dias de Atraso vs. NPS</div>
+        <div class="chart-card-sub">Amostra de pedidos da base · cada ponto representa um pedido individual</div>
+        <div class="chart-wrap" style="height:260px;">
+          <canvas id="chartDelayScatter"></canvas>
+        </div>
+      </div>
+      <div class="chart-card" style="grid-column: 1 / -1;">
         <div class="chart-card-title">NPS Médio por Dias de Atraso na Entrega</div>
-        <div class="chart-card-sub">Relação linear: cada dia adicional de atraso está associado a −1,03 ponto em NPS · r = −0,60 · R²=0,36</div>
+        <div class="chart-card-sub">Médias observadas por grupo de atraso · queda consistente de satisfação conforme o atraso aumenta</div>
         <div class="chart-wrap" style="height:200px;">
           <canvas id="chartDelayLinear"></canvas>
         </div>
@@ -415,6 +422,27 @@
             <strong>8+ reclamações → NPS abaixo de 3, sem promotores</strong>
             <span>A partir de 8 reclamações, praticamente nenhum cliente promotor foi observado na base.</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHT 3 -->
+    <p class="sub-h">🧪 Hipóteses logísticas complementares</p>
+    <p class="sub-p">Nem todo indicador operacional mostrou o mesmo peso do atraso. Tentativas de entrega ficaram praticamente estáveis entre os grupos, enquanto frete alto entre clientes atrasados sugere apenas um agravamento pequeno na satisfação.</p>
+
+    <div class="chart-grid" style="margin-bottom: 52px;">
+      <div class="chart-card">
+        <div class="chart-card-title">NPS por Tentativas de Entrega</div>
+        <div class="chart-card-sub">Médias muito próximas entre 1, 2 e 3 tentativas</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartAttemptsNps"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Frete Alto Entre Clientes com Atraso</div>
+        <div class="chart-card-sub">Frete alto definido como freight_rate acima do 3º quartil</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartHighFreightDelay"></canvas>
         </div>
       </div>
     </div>
@@ -627,6 +655,13 @@ const C = {
   gray:     '#D1D5DB',
 };
 
+const delayScatterRaw = [{"x":0.0,"y":8.3},{"x":0.0,"y":5.0},{"x":0.0,"y":7.6},{"x":0.0,"y":7.3},{"x":0.0,"y":5.4},{"x":0.0,"y":8.9},{"x":0.0,"y":6.0},{"x":0.0,"y":5.1},{"x":0.0,"y":4.0},{"x":0.0,"y":5.3},{"x":0.0,"y":7.6},{"x":0.0,"y":9.4},{"x":0.0,"y":8.3},{"x":0.0,"y":5.6},{"x":0.0,"y":8.3},{"x":0.0,"y":10.0},{"x":0.0,"y":5.8},{"x":0.0,"y":6.8},{"x":0.0,"y":6.6},{"x":1.0,"y":10.0},{"x":1.0,"y":5.5},{"x":1.0,"y":5.0},{"x":1.0,"y":7.4},{"x":1.0,"y":3.8},{"x":1.0,"y":5.5},{"x":1.0,"y":6.4},{"x":1.0,"y":7.9},{"x":1.0,"y":7.1},{"x":1.0,"y":3.3},{"x":1.0,"y":5.0},{"x":1.0,"y":4.2},{"x":1.0,"y":6.8},{"x":1.0,"y":6.1},{"x":1.0,"y":7.7},{"x":1.0,"y":9.3},{"x":1.0,"y":1.6},{"x":1.0,"y":4.3},{"x":1.0,"y":0.4},{"x":1.0,"y":5.5},{"x":1.0,"y":6.5},{"x":1.0,"y":8.0},{"x":1.0,"y":6.6},{"x":1.0,"y":6.0},{"x":1.0,"y":6.1},{"x":1.0,"y":6.1},{"x":1.0,"y":7.7},{"x":1.0,"y":4.6},{"x":1.0,"y":5.0},{"x":1.0,"y":4.4},{"x":1.0,"y":5.6},{"x":1.0,"y":5.3},{"x":1.0,"y":0.0},{"x":1.0,"y":4.3},{"x":1.0,"y":5.0},{"x":1.0,"y":5.5},{"x":1.0,"y":6.8},{"x":1.0,"y":6.5},{"x":1.0,"y":6.2},{"x":2.0,"y":4.6},{"x":2.0,"y":3.8},{"x":2.0,"y":3.7},{"x":2.0,"y":7.0},{"x":2.0,"y":3.1},{"x":2.0,"y":2.1},{"x":2.0,"y":1.3},{"x":2.0,"y":2.4},{"x":2.0,"y":2.7},{"x":2.0,"y":2.2},{"x":2.0,"y":7.1},{"x":2.0,"y":6.6},{"x":2.0,"y":4.4},{"x":2.0,"y":5.7},{"x":2.0,"y":8.4},{"x":2.0,"y":5.5},{"x":2.0,"y":2.6},{"x":2.0,"y":2.6},{"x":2.0,"y":6.5},{"x":2.0,"y":3.7},{"x":2.0,"y":1.9},{"x":2.0,"y":7.3},{"x":2.0,"y":1.2},{"x":2.0,"y":5.8},{"x":2.0,"y":2.4},{"x":2.0,"y":4.1},{"x":2.0,"y":6.3},{"x":2.0,"y":3.6},{"x":2.0,"y":2.4},{"x":2.0,"y":5.0},{"x":2.0,"y":7.5},{"x":2.0,"y":6.7},{"x":2.0,"y":3.0},{"x":2.0,"y":4.1},{"x":2.0,"y":3.4},{"x":2.0,"y":5.1},{"x":2.0,"y":6.0},{"x":2.0,"y":5.3},{"x":2.0,"y":4.5},{"x":2.0,"y":5.1},{"x":2.0,"y":3.4},{"x":2.0,"y":3.2},{"x":2.0,"y":4.6},{"x":2.0,"y":2.6},{"x":3.0,"y":2.8},{"x":3.0,"y":4.6},{"x":3.0,"y":5.0},{"x":3.0,"y":3.8},{"x":3.0,"y":0.0},{"x":3.0,"y":3.5},{"x":3.0,"y":5.0},{"x":3.0,"y":1.3},{"x":3.0,"y":1.2},{"x":3.0,"y":2.4},{"x":3.0,"y":0.0},{"x":3.0,"y":3.9},{"x":3.0,"y":6.3},{"x":3.0,"y":1.7},{"x":3.0,"y":2.8},{"x":3.0,"y":1.5},{"x":3.0,"y":0.8},{"x":3.0,"y":5.2},{"x":3.0,"y":4.2},{"x":3.0,"y":0.0},{"x":3.0,"y":3.9},{"x":3.0,"y":4.3},{"x":3.0,"y":2.2},{"x":3.0,"y":3.6},{"x":4.0,"y":0.0},{"x":4.0,"y":0.0},{"x":4.0,"y":0.0},{"x":4.0,"y":2.8},{"x":4.0,"y":0.8},{"x":4.0,"y":4.2},{"x":4.0,"y":0.3},{"x":4.0,"y":0.0},{"x":4.0,"y":0.3},{"x":4.0,"y":3.6},{"x":4.0,"y":4.4},{"x":4.0,"y":1.4},{"x":4.0,"y":3.0},{"x":4.0,"y":3.3},{"x":4.0,"y":8.3},{"x":4.0,"y":1.0},{"x":5.0,"y":0.6},{"x":5.0,"y":1.4},{"x":5.0,"y":3.2},{"x":5.0,"y":2.4},{"x":5.0,"y":2.1},{"x":6.0,"y":0.3},{"x":6.0,"y":3.2},{"x":8.0,"y":0.0}];
+const delayScatterPoints = delayScatterRaw.map((point, index) => ({
+  x: point.x + ((((index * 37) % 17) - 8) / 80),
+  y: point.y,
+  delay: point.x,
+}));
+
 // ── 1. NPS Distribution Donut ──────────────────
 new Chart(document.getElementById('chartNpsDist'), {
   type: 'doughnut',
@@ -719,7 +754,49 @@ new Chart(document.getElementById('chartCorrelations'), {
   }
 });
 
-// ── 4. Resolution Time Bar ────────────────────
+// ── 4. Scatter Atraso x NPS ───────────────────
+new Chart(document.getElementById('chartDelayScatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Pedidos',
+      data: delayScatterPoints,
+      backgroundColor: 'rgba(37, 99, 235, 0.35)',
+      borderColor: 'rgba(30, 58, 95, 0.55)',
+      borderWidth: 1,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: {
+        min: -0.5, max: 8.5,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 1 },
+        title: { display: true, text: 'Dias de atraso', font: { size: 11 } }
+      },
+      y: {
+        min: 0, max: 10,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 2 },
+        title: { display: true, text: 'Score de NPS', font: { size: 11 } }
+      }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: items => `${items[0].raw.delay} dia(s) de atraso`,
+          label: ctx => `  NPS: ${ctx.parsed.y.toFixed(1)}`
+        }
+      }
+    }
+  }
+});
+
+// ── 5. Resolution Time Bar ────────────────────
 new Chart(document.getElementById('chartResolution'), {
   type: 'bar',
   data: {
@@ -840,7 +917,7 @@ new Chart(document.getElementById('chartDelayLinear'), {
     labels: ['0 dias', '1 dia', '2 dias', '3 dias', '4 dias', '5 dias', '6 dias', '7+ dias'],
     datasets: [{
       label: 'NPS Médio',
-      data: [6.63, 5.60, 4.57, 3.54, 2.51, 1.48, 0.45, 0],
+      data: [6.86, 5.55, 4.58, 3.44, 2.44, 1.48, 1.10, 0.24],
       backgroundColor: ['#16A34A','#65A30D','#84CC16','#F59E0B','#F97316','#EF4444','#DC2626','#B91C1C'],
       borderRadius: 8,
       borderSkipped: false,
@@ -872,7 +949,7 @@ new Chart(document.getElementById('chartComplaintsNps'), {
     labels: ['0','1','2','3','4','5','6','7','8','9','10','11'],
     datasets: [{
       label: 'NPS Médio',
-      data: [7.28, 6.58, 5.88, 5.18, 4.48, 3.78, 3.08, 2.38, 1.68, 0.98, 0.28, 0],
+      data: [8.52, 7.77, 6.05, 4.91, 4.22, 3.65, 3.06, 2.81, 2.07, 2.49, 2.28, 0.85],
       backgroundColor: [
         '#16A34A','#22C55E','#65A30D','#84CC16',
         '#F59E0B','#F97316','#EF4444','#DC2626',
@@ -901,6 +978,82 @@ new Chart(document.getElementById('chartComplaintsNps'), {
     plugins: {
       legend: { display: false },
       tooltip: { callbacks: { label: ctx => `  NPS médio: ${ctx.parsed.y.toFixed(2)}` } }
+    }
+  }
+});
+
+// ── 9. NPS por Tentativas de Entrega ───────────
+new Chart(document.getElementById('chartAttemptsNps'), {
+  type: 'bar',
+  data: {
+    labels: ['1 tentativa', '2 tentativas', '3 tentativas'],
+    datasets: [{
+      label: 'NPS Médio',
+      data: [4.35, 4.26, 4.52],
+      backgroundColor: [C.blueLt, C.blueLt, C.blueLt],
+      borderColor: C.blue,
+      borderWidth: 1,
+      borderRadius: 8,
+      borderSkipped: false,
+      maxBarThickness: 70,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 3.8, max: 5,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 0.2 },
+        title: { display: true, text: 'NPS Médio', font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => `  n = ${[824, 838, 838][ctx.dataIndex]} pedidos`,
+          label: ctx => `  NPS médio: ${ctx.parsed.y.toFixed(2)}`
+        }
+      }
+    }
+  }
+});
+
+// ── 10. Frete Alto entre Clientes com Atraso ───
+new Chart(document.getElementById('chartHighFreightDelay'), {
+  type: 'bar',
+  data: {
+    labels: ['Demais clientes\ncom atraso', 'Frete alto\n(>= Q3)'],
+    datasets: [{
+      label: 'NPS Médio',
+      data: [4.16, 3.81],
+      backgroundColor: [C.amber, C.detrator],
+      borderRadius: 8,
+      borderSkipped: false,
+      maxBarThickness: 86,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 3.4, max: 4.5,
+        grid: { color: '#F3F4F6' },
+        ticks: { stepSize: 0.2 },
+        title: { display: true, text: 'NPS Médio', font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => `  n = ${[1667, 556][ctx.dataIndex]} clientes`,
+          label: ctx => `  NPS médio: ${ctx.parsed.y.toFixed(2)}`
+        }
+      }
     }
   }
 });
